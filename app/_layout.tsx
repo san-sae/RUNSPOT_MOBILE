@@ -77,14 +77,6 @@ export default function RootLayout() {
             headerLeft: () => <StackHeaderBack />,
           }}
         />
-        <Stack.Screen
-          name="draw-running-course"
-          options={{
-            headerShown: true,
-            title: "러닝 코스 그리기",
-            headerLeft: () => <StackHeaderBack />,
-          }}
-        />
         <Stack.Screen name="search-result" />
         <Stack.Screen
           name="session-detail"

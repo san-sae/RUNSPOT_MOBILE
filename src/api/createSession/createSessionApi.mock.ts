@@ -6,6 +6,8 @@ import type {
 export const createSession = async (
   _requestBody: CreateSessionRequest,
 ): Promise<CreateSessionResponse> => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return {
     id: 1,
     hostUserId: 1,
@@ -24,5 +26,15 @@ export const createSession = async (
     startAt: "2026-02-10T07:00:00",
     capacity: 10,
     genderPolicy: "MIXED",
+    markers: [
+      {
+        id: 1,
+        x: 126.9347,
+        y: 37.5285,
+        title: "반환점",
+        description: "여기서 돌면서 잠시 휴식 예정입니다.",
+      },
+    ],
+    description: "열심히 하실 분들을 원합니다.",
   };
 };

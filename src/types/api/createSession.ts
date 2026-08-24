@@ -4,6 +4,13 @@
 export type RunType = "LSD" | "INTERVAL" | "RECOVERY";
 export type RoutePolyline = { x: number; y: number }[];
 export type GenderPolicy = "MALE_ONLY" | "FEMALE_ONLY" | "MIXED";
+export type Markers = {
+  id: number;
+  x: number;
+  y: number;
+  title: string;
+  description: string;
+}[];
 
 export interface Session {
   title: string;
@@ -17,6 +24,8 @@ export interface Session {
   startAt: string;
   capacity: number;
   genderPolicy: GenderPolicy;
+  markers: Markers;
+  description?: string;
 }
 
 export type CreateSessionRequest = Session;
