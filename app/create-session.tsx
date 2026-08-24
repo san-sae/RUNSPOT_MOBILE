@@ -19,6 +19,7 @@ import { Button } from "@/src/components/common/button/Button";
 import { DateTimePickerField } from "@/src/components/common/datetime-field";
 import { Select } from "@/src/components/common/select";
 import { TextField } from "@/src/components/common/textfield";
+import DrawCourseModal from "@/src/components/create-session/DrawCourseModal";
 import { colors, fontSizes, spacing } from "@/src/constants";
 import type {
   CreateSessionRequest,
@@ -110,6 +111,7 @@ export default function CreateSessionScreen() {
   const [error, setError] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   const [sessionForm, setSessionForm] = useState(initialFormState);
 
   const handleChange = <K extends keyof SessionFormState>(
@@ -383,7 +385,7 @@ export default function CreateSessionScreen() {
               variant="outline"
               size="sm"
               flex
-              onPress={() => router.push("/draw-running-course")}
+              onPress={() => setIsMapModalVisible(true)}
             >
               러닝 코스 그리기
             </Button>
@@ -426,15 +428,39 @@ export default function CreateSessionScreen() {
           </Button>
         </View>
       </ScrollView>
+
+      <DrawCourseModal
+        visible={isMapModalVisible}
+        onClose={() => setIsMapModalVisible(false)}
+        initialData={
+          sessionForm.routePolyline.length > 0
+            ? {
+                routePolyline: sessionForm.routePolyline,
+                markers: sessionForm.markers,
+                locationName: sessionForm.locationName,
+                targetDistanceKm: sessionForm.targetDistanceKm,
+              }
+            : undefined
+        }
+        onApply={(result) => {
+          setSessionForm((prev) => ({
+            ...prev,
+            routePolyline: result.routePolyline,
+            markers: result.markers,
+            locationName: result.locationName,
+            targetDistanceKm: result.targetDistanceKm,
+            locationX: result.routePolyline[0].x.toString(),
+            locationY: result.routePolyline[0].y.toString(),
+          }));
+          setIsMapModalVisible(false);
+        }}
+      />
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.bgSecondary,
-  },
+  root: { flex: 1, backgroundColor: colors.bgSecondary },
   scrollContent: {
     alignItems: "center",
     paddingHorizontal: spacing.base,
@@ -449,11 +475,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     lineHeight: 18,
   },
-  formWrap: {
-    width: "100%",
-    maxWidth: 400,
-    gap: spacing.base,
-  },
+  formWrap: { width: "100%", maxWidth: 400, gap: spacing.base },
   sectionTitle: {
     fontSize: fontSizes.sm,
     fontWeight: "600",
@@ -466,11 +488,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginTop: -spacing.sm,
   },
-  courseActionRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    width: "100%",
-  },
+  courseActionRow: { flexDirection: "row", gap: spacing.sm, width: "100%" },
   formError: {
     fontSize: fontSizes.sm,
     color: colors.red600,
@@ -482,27 +500,14 @@ const styles = StyleSheet.create({
     marginTop: -spacing.sm,
     marginLeft: spacing.xs,
   },
-  paceField: {
-    width: "100%",
-    gap: spacing.sm,
-  },
+  paceField: { width: "100%", gap: spacing.sm },
   paceLabelRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
   },
-  paceLabel: {
-    fontSize: fontSizes.sm,
-    fontWeight: "600",
-    color: colors.text,
-  },
-  paceValueText: {
-    fontSize: fontSizes.sm,
-    color: colors.textSecondary,
-  },
-  paceSlider: {
-    width: "100%",
-    height: 40,
-  },
+  paceLabel: { fontSize: fontSizes.sm, fontWeight: "600", color: colors.text },
+  paceValueText: { fontSize: fontSizes.sm, color: colors.textSecondary },
+  paceSlider: { width: "100%", height: 40 },
 });
