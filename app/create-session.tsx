@@ -1,7 +1,7 @@
 import RNSlider from "@react-native-community/slider";
 import { AxiosError } from "axios";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -19,13 +19,16 @@ import { Button } from "@/src/components/common/button/Button";
 import { DateTimePickerField } from "@/src/components/common/datetime-field";
 import { Select } from "@/src/components/common/select";
 import { TextField } from "@/src/components/common/textfield";
+import CoursePreviewCard from "@/src/components/create-session/CoursePreviewCard";
 import DrawCourseModal from "@/src/components/create-session/DrawCourseModal";
+import LoadCourseModal from "@/src/components/create-session/LoadCourseModal";
 import { colors, fontSizes, spacing } from "@/src/constants";
 import type {
   CreateSessionRequest,
   GenderPolicy,
   RunType,
 } from "@/src/types/api/createSession";
+import { PastCourse } from "@/src/types/domain/course";
 import { AnalyticsHelper } from "@/src/utils/analytics";
 import { paceStringToSeconds } from "@/src/utils/pace";
 import { isEmpty } from "@/src/utils/validation";
@@ -113,6 +116,38 @@ export default function CreateSessionScreen() {
 
   const [isMapModalVisible, setIsMapModalVisible] = useState(false);
   const [sessionForm, setSessionForm] = useState(initialFormState);
+
+  const [isLoadModalVisible, setIsLoadModalVisible] = useState(false);
+  const [courseAddress, setCourseAddress] = useState("");
+
+  const handleClearCourse = useCallback(() => {
+    setSessionForm((prev) => ({
+      ...prev,
+      routePolyline: [],
+      markers: [],
+      locationName: "",
+      targetDistanceKm: "",
+      locationX: "",
+      locationY: "",
+    }));
+    setCourseAddress("");
+  }, []);
+
+  const handleCourseLoaded = useCallback((course: PastCourse) => {
+    setSessionForm((prev) => ({
+      ...prev,
+      routePolyline: course.routePolyline,
+      markers: course.markers,
+      locationName: course.locationName,
+      targetDistanceKm: String(course.targetDistanceKm),
+      locationX: course.routePolyline[0]?.x.toString() || "",
+      locationY: course.routePolyline[0]?.y.toString() || "",
+      avgPace: secondsToPaceString(course.avgPaceSec),
+    }));
+    setCourseAddress(course.address);
+  }, []);
+
+  const hasCourseData = sessionForm.routePolyline.length > 1;
 
   const handleChange = <K extends keyof SessionFormState>(
     key: K,
@@ -373,23 +408,43 @@ export default function CreateSessionScreen() {
           />
 
           <Text style={styles.sectionTitle}>러닝 코스 설정</Text>
-          <Text style={styles.sectionHint}>
-            「러닝 코스 그리기」에서 좌표를 설정하면 세션 등록 시 최소
-            경로(2점)로 반영됩니다.
-          </Text>
-          <View style={styles.courseActionRow}>
-            <Button variant="outline" size="sm" flex disabled>
-              러닝 코스 불러오기
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              flex
-              onPress={() => setIsMapModalVisible(true)}
-            >
-              러닝 코스 그리기
-            </Button>
-          </View>
+          {hasCourseData ? (
+            <CoursePreviewCard
+              title={sessionForm.locationName}
+              distance={sessionForm.targetDistanceKm}
+              pace={sessionForm.avgPace}
+              address={courseAddress}
+              routePolyline={sessionForm.routePolyline}
+              onClear={handleClearCourse}
+              onLoadPress={() => setIsLoadModalVisible(true)}
+              onDrawPress={() => setIsMapModalVisible(true)}
+            />
+          ) : (
+            <>
+              <Text style={styles.sectionHint}>
+                「러닝 코스 그리기」에서 좌표를 설정하면 세션 등록 시 최소
+                경로(2점)로 반영됩니다.
+              </Text>
+              <View style={styles.courseActionRow}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  flex
+                  onPress={() => setIsLoadModalVisible(true)}
+                >
+                  러닝 코스 불러오기
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  flex
+                  onPress={() => setIsMapModalVisible(true)}
+                >
+                  러닝 코스 그리기
+                </Button>
+              </View>
+            </>
+          )}
 
           {error.locationX ? (
             <Text style={styles.fieldError}>{error.locationX}</Text>
@@ -454,6 +509,12 @@ export default function CreateSessionScreen() {
           }));
           setIsMapModalVisible(false);
         }}
+      />
+
+      <LoadCourseModal
+        visible={isLoadModalVisible}
+        onClose={() => setIsLoadModalVisible(false)}
+        onSelect={handleCourseLoaded}
       />
     </KeyboardAvoidingView>
   );
