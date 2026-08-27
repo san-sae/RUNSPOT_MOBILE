@@ -13,8 +13,6 @@ function tabIcon(name: IonName) {
 }
 
 export default function MainLayout() {
-  const isChatEnabled = process.env.EXPO_PUBLIC_ENABLE_CHAT === "true";
-
   return (
     <Tabs
       screenOptions={{
@@ -52,18 +50,13 @@ export default function MainLayout() {
           tabBarIcon: tabIcon("search"),
         }}
       />
-      {/*
-       * TODO: 1차 MVP 배포 스펙에서 채팅 기능 제외
-       * 사유: 채팅 기능 구현 연기
-       * 해제 조건: 1차 배포 후 기능 구현 시 EXPO_PUBLIC_ENABLE_CHAT 제거 및 활성화
-       */}
       <Tabs.Screen
         name="chat"
         options={{
           title: "채팅",
           tabBarLabel: "채팅",
           tabBarIcon: tabIcon("chatbubbles-outline"),
-          href: isChatEnabled ? "/chat" : null,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
