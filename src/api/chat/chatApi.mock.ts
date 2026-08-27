@@ -1,0 +1,112 @@
+import { ChatRoom, GroupMessage, Message } from "@/src/types/api/chat";
+
+export const MOCK_CHAT_ROOMS: ChatRoom[] = [
+  {
+    id: "g1",
+    type: "GROUP",
+    title: "여의도 야간 러닝",
+    lastMessage: "러너김: 다들 이따 뵙겠습니다!",
+    lastMessageTime: "오후 6:30",
+    unreadCount: 2,
+    memberCount: 5,
+  },
+  {
+    id: "g2",
+    type: "GROUP",
+    title: "한강 새벽 런",
+    lastMessage: "정수아: 내일 몇 시에 만날까요?",
+    lastMessageTime: "오후 5:15",
+    unreadCount: 0,
+    memberCount: 8,
+  },
+  {
+    id: "o1",
+    type: "ONE_ON_ONE",
+    title: "이민지",
+    hostName: "러너김",
+    lastMessage: "여의도에서 자주 뛰는데 같이 달리고 싶...",
+    lastMessageTime: "오전 10:30",
+    unreadCount: 1,
+  },
+  {
+    id: "o2",
+    type: "ONE_ON_ONE",
+    title: "박서준",
+    hostName: "러너김",
+    lastMessage: "오늘 러닝 세션 참여하고 싶습니다!",
+    lastMessageTime: "어제",
+    unreadCount: 0,
+  },
+];
+
+export const MOCK_MESSAGES: Message[] = [
+  {
+    id: "m2",
+    senderId: "me",
+    senderName: "러너김",
+    avatarChar: "김",
+    isHost: true,
+    content: "안녕하세요! 짐 보관은 여의나루역 물품보관함을 이용하시면 됩니다.",
+    time: "오후 2:15",
+    type: "TEXT",
+  },
+  {
+    id: "m1",
+    senderId: "other",
+    senderName: "이민지",
+    avatarChar: "이",
+    isHost: false,
+    content: "안녕하세요! 신청서 넣었습니다. 혹시 짐 보관은 어디서 하나요?",
+    time: "오후 2:10",
+    type: "TEXT",
+  },
+  {
+    id: "s1",
+    senderId: "system",
+    senderName: "system",
+    avatarChar: "",
+    isHost: false,
+    content: "2026년 8월 14일 금요일",
+    time: "",
+    type: "SYSTEM",
+  },
+];
+
+export const MOCK_GROUP_MESSAGES: GroupMessage[] = [
+  {
+    id: "m4",
+    senderId: "me",
+    senderName: "러너김",
+    avatarChar: "김",
+    role: "PARTICIPANT",
+    content: "다들 이따 뵙겠습니다!",
+    time: "오후 7:26",
+  },
+  {
+    id: "m3",
+    senderId: "u1",
+    senderName: "이민지",
+    avatarChar: "이",
+    role: "HOST",
+    content: "네 조심히 오세요! 도착하시면 채팅 남겨주세요.",
+    time: "오후 7:20",
+  },
+  {
+    id: "s2",
+    senderId: "system",
+    senderName: "system",
+    avatarChar: "",
+    role: "SYSTEM",
+    content: "박서준님이 참여하였습니다.",
+    time: "",
+  },
+  {
+    id: "s1",
+    senderId: "system",
+    senderName: "system",
+    avatarChar: "",
+    role: "SYSTEM",
+    content: "이민지님이 참여하였습니다.",
+    time: "",
+  },
+];
