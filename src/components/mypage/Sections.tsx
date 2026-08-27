@@ -104,7 +104,7 @@ export const ProfileSection = ({
             style={styles.demographics}
           >{`${displayAge} · ${displayGender}`}</Text>
           <Chip
-            icon={<MannerIcon width={14} height={14} fill={colors.red} />}
+            icon={<MannerIcon width={14} height={14} />}
             label={`매너온도 ${profile.mannerTemp ?? 36.5}°C`}
             color="red"
             size="small"
@@ -268,14 +268,12 @@ export const AppliedRunsSection = ({
   isError,
   onRetry,
 }: SectionsProps<AppliedRunningsResponse>) => {
+  const router = useRouter();
   const runs = data?.appliedRunnings || [];
-  // TODO: 채팅 페이지 네비게이션 연결
-  const handleOpenChat = (runningId: number) => {
-    // eslint-disable-next-line no-console
-    console.log(`${runningId}번 채팅 열기`);
-  };
 
-  const isChatEnabled = process.env.EXPO_PUBLIC_ENABLE_CHAT === "true";
+  const handleOpenChat = (runningId: number) => {
+    router.push(`/chat/group/${runningId}`);
+  };
 
   if (isFetching && runs.length === 0) {
     return (
@@ -323,11 +321,7 @@ export const AppliedRunsSection = ({
                     size="small"
                   />
 
-                  {/*
-                   * TODO: 1차 배포 후 기능 구현 전까지 채팅 기능 비활성화
-                   * isChatEnabled 활성화 시 주석 제거 혹은 유지
-                   */}
-                  {isChatEnabled && run.chatEnabled && (
+                  {run.chatEnabled && (
                     <Button
                       variant="outline"
                       size="sm"
