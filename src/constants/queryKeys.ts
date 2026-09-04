@@ -43,3 +43,8 @@ export const nearbyKeys = {
   all: ["nearbySessions"] as const,
   location: (x: number, y: number) => [...nearbyKeys.all, x, y] as const,
 };
+
+export const notificationKeys = {
+  all: ["notifications"] as const,
+  list: () => [...notificationKeys.all, "list"] as const,
+};
