@@ -25,6 +25,8 @@ import { logoutUser } from "@/src/api/auth/logoutUser";
 import { withdrawUser } from "@/src/api/auth/withdraswUser";
 import RightArrowSvg from "@/src/assets/icon/my-page/rightarrow.svg";
 import SettingSvg from "@/src/assets/icon/my-page/setting.svg";
+import BellSvg from "@/src/assets/icon/notification/bell.svg";
+import { Button } from "@/src/components/common//button/Button";
 import { BannerAdComponent } from "@/src/components/common/admob/BannerAdComponent";
 import {
   colors,
@@ -165,9 +167,19 @@ export default function MyPageScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>마이페이지</Text>
-        <Pressable onPress={() => setSettingsVisible(true)} hitSlop={10}>
-          <SettingSvg width={24} height={24} color={colors.text} />
-        </Pressable>
+        <View style={styles.headerRight}>
+          <Button
+            variant="text"
+            iconOnly
+            onPress={() => router.push("/notifications")}
+          >
+            <BellSvg width={24} height={24} color={colors.text} />
+          </Button>
+
+          <Pressable onPress={() => setSettingsVisible(true)} hitSlop={10}>
+            <SettingSvg width={24} height={24} color={colors.text} />
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -262,6 +274,11 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.lg,
     fontWeight: fontWeights.bold,
     color: colors.text,
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
   },
   scrollContent: { paddingBottom: spacing.xxl },
   adWrapper: {

@@ -1,30 +1,15 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { logoutUser } from "@/src/api/auth/logoutUser";
 import LogoIcon from "@/src/assets/icon/brand/logo.svg";
+import BellSvg from "@/src/assets/icon/notification/bell.svg";
 import { Button } from "@/src/components/common/button/Button";
 import { colors, fontSizes, fontWeights, spacing } from "@/src/constants";
 
 export function HomeHeader() {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
-  const [loggingOut, setLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    if (loggingOut) return;
-    setLoggingOut(true);
-    try {
-      await logoutUser({ queryClient });
-      router.replace("/(auth)/login");
-    } finally {
-      setLoggingOut(false);
-    }
-  };
 
   return (
     <View
@@ -54,12 +39,10 @@ export function HomeHeader() {
         <View style={styles.right}>
           <Button
             variant="text"
-            size="xs"
-            disabled={loggingOut}
-            onPress={handleLogout}
-            wrapperStyle={styles.logoutBtn}
+            iconOnly
+            onPress={() => router.push("/notifications")}
           >
-            로그아웃
+            <BellSvg width={24} height={24} />
           </Button>
         </View>
       </View>
@@ -103,8 +86,5 @@ const styles = StyleSheet.create({
   },
   right: {
     marginLeft: spacing.xs,
-  },
-  logoutBtn: {
-    minWidth: 72,
   },
 });
