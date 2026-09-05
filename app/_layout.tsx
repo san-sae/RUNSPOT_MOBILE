@@ -1,5 +1,6 @@
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as Notifications from "expo-notifications";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -9,6 +10,13 @@ import { setUnauthorizedHandler } from "@/src/api/axiosInstance";
 import { LoadingScreen } from "@/src/components/common/loading/LoadingScreen";
 import { StackHeaderBack } from "@/src/components/header";
 import { colors } from "@/src/constants";
+import { usePushNotifications } from "@/src/hooks/notification/usePushNotifications";
+import {
+  handleNotificationRouting,
+  NotificationRoutePayload,
+  parseString,
+  parseId,
+} from "@/src/utils/notificationRouting";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +24,8 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const [authReady, setAuthReady] = useState(false);
+
+  usePushNotifications();
 
   useEffect(() => {
     setUnauthorizedHandler(() => {
@@ -53,6 +63,29 @@ export default function RootLayout() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
+
+  useEffect(() => {
+    if (!authReady) return;
+
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const data = response.notification.request.content.data;
+
+        if (data && typeof data.type === "string") {
+          const payload: NotificationRoutePayload = {
+            type: data.type,
+            relatedId: parseId(data.relatedId),
+            title: parseString(data.title),
+            message: parseString(data.message),
+          };
+
+          handleNotificationRouting(payload, router);
+        }
+      });
+    return () => {
+      responseListener.remove();
+    };
+  }, [authReady, router]);
 
   if (!authReady) {
     return <LoadingScreen />;
