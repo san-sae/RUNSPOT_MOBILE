@@ -29,6 +29,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     predictiveBackGestureEnabled: false,
     versionCode: 2,
   },
+
+  notification: {
+    icon: "./src/assets/icon/push-icon.png",
+    color: "#2B7FFF",
+  },
+
   web: {
     favicon: "./src/assets/favicon.png",
   },

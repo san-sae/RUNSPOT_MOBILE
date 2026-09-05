@@ -24,6 +24,11 @@ import { Button } from "@/src/components/common//button/Button";
 import { colors, fontSizes, spacing } from "@/src/constants";
 import { NOTIFICATION_ICON_MAP } from "@/src/constants/mappings";
 import { NotificationItem } from "@/src/types/api/notification";
+import {
+  handleNotificationRouting,
+  parseId,
+  parseString,
+} from "@/src/utils/notificationRouting";
 
 const notificationKeys = { list: () => ["notifications", "list"] };
 
@@ -148,58 +153,15 @@ export default function NotificationScreen() {
           : [],
     );
 
-    switch (item.type) {
-      case "JOIN_REQUEST":
-        if (item.relatedId) {
-          router.push({
-            pathname: "/manage-participants",
-            params: { id: item.relatedId, title: item.title ?? "" },
-          });
-        }
-        break;
-
-      case "JOIN_ACCEPTED":
-        if (item.relatedId) {
-          router.push(`/chat/group/${item.relatedId}`);
-        }
-        break;
-
-      case "JOIN_REJECTED":
-      case "CANCELED":
-        if (item.relatedId) {
-          router.push({
-            pathname: "/session-detail",
-            params: { id: item.relatedId },
-          });
-        }
-        break;
-
-      case "GROUP_CHAT":
-        if (item.relatedId) {
-          router.push(`/chat/group/${item.relatedId}`);
-        }
-        break;
-
-      case "ONE_ON_ONE_CHAT":
-        if (item.relatedId) {
-          router.push(`/chat/private/${item.relatedId}`);
-        }
-        break;
-
-      case "RUNNING_FINISHED":
-        if (item.relatedId) {
-          router.push(`/host-rating?sessionId=${item.relatedId}`);
-        }
-        break;
-
-      case "COMMENT":
-        // TODO [라우팅]: 게시글 상세 화면으로 이동
-        Alert.alert("알림", item.message);
-        break;
-
-      default:
-        break;
-    }
+    handleNotificationRouting(
+      {
+        type: item.type,
+        relatedId: parseId(item.relatedId),
+        title: parseString(item.title),
+        message: parseString(item.message),
+      },
+      router,
+    );
   };
 
   const renderItem = ({ item }: { item: NotificationItem }) => {
